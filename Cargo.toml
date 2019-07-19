@@ -21,4 +21,5 @@ futures = "0.1.27"
 
 
 [dev-dependencies]
+clap = "2.33.0"
 actix-rt = "0.2.2"

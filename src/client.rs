@@ -57,7 +57,7 @@ impl Client {
     pub fn post<T, S, P>(&self, path: S, payload: Option<P>) -> impl Future<Item=T, Error=Error>
         where T: DeserializeOwned, S: Into<String>, P: Serialize {
             let req = self.client
-                .post(self.host.to_owned()+&self.version+&path.into())
+                .post(self.host.to_owned()+"/"+&self.version+&path.into())
                 .content_type("application/json")
                 .header("Authorization", self.api_key.clone());
 
