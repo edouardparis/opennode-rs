@@ -6,6 +6,7 @@ use serde::de::DeserializeOwned;
 use awc;
 use serde;
 use serde_json;
+use serde::{Deserialize};
 
 use actix_http::body::Body;
 
@@ -14,6 +15,11 @@ pub struct Client {
     host: String,
     version: String,
     api_key: String,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct Response<T> {
+   pub data: T
 }
 
 impl Client {
@@ -78,7 +84,9 @@ impl Client {
                         (resp, body_out)
                     }).map_err(|e| {Error::Payload(awc::error::JsonPayloadError::Payload(e))})
                 }).and_then(|(_, body)| {
-                    serde_json::from_slice(&body).map_err(|e| {Error::Payload(awc::error::JsonPayloadError::Deserialize(e))})
+                    serde_json::from_slice(&body)
+                        .map_err(|e| {Error::Payload(awc::error::JsonPayloadError::Deserialize(e))})
+                        .map(|res: Response<T>| res.data)
                 })
         }
 }
