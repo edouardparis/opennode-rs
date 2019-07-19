@@ -1,6 +1,9 @@
+use futures::future::Future;
 use serde::{Serialize, Deserialize};
 
 use crate::invoice;
+use crate::client::Client;
+use crate::error::Error;
 
 /// Charge is a charge resource.
 #[derive(Debug, Serialize, Deserialize)]
@@ -41,5 +44,51 @@ pub struct Charge {
 	pub hashed_order: String,
 }
 
+
+/// Payload is a charge payload.
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Payload {
+    /// Charge's price in satoshis, unless currency parameter is used.
+    pub amount: u64,
+    /// Charge's description
+    pub description: Option<String>,
+    /// Charge's currency
+    pub currency: Option<String>,
+    /// Customer's email
+    pub customer_email: Option<String>,
+    /// Customer's name
+    pub customer_name: Option<String>,
+    /// URL to receive webhooks
+    pub callback_url: Option<String>,
+    /// URL to redirect user after payment
+    pub success_url: Option<String>,
+    /// Convert to merchant's currency (needs Bank account enabled)
+    pub auto_settle: Option<String>
+}
+
+impl Payload {
+    pub fn new(a: u64) -> Payload {
+        Payload{
+            amount: a,
+            description: None,
+            currency: None,
+            customer_email: None,
+            customer_name: None,
+            callback_url: None,
+            success_url: None,
+            auto_settle: None,
+        }
+    }
+}
+
+/// Create charge
+pub fn create(client: &Client, payload: Payload) -> impl Future<Item=Charge, Error=Error> {
+    client.post("/charges", Some(payload))
+}
+
+/// Retrieve charge with the given id
+pub fn get(client: &Client, id: u64) -> impl Future<Item=Charge, Error=Error> {
+    client.get(format!("/charges/{}", id), None as Option<String>)
+}
 
 
