@@ -17,7 +17,7 @@ pub struct Charge {
 	/// unpaid/processing/paid
 	pub status: String,
 	/// Charge fee in satoshis
-	pub fee: u64,
+	pub fee: Option<u64>,
 	/// Charge value at issue time
 	pub fiat_value: f64,
 	/// Charge currency
@@ -33,15 +33,15 @@ pub struct Charge {
 	/// External order ID
 	pub order_id: String,
 	/// Charge payment details
-	pub chain_invoice: invoice::Chain,
+	pub chain_invoice: Option<invoice::Chain>,
 	/// lightning_invoice
-	pub lightning_invoice: invoice::Lightning,
+	pub lightning_invoice: Option<invoice::Lightning>,
 	/// Hashed Order
 	/// OpenNode signs all charge related events it sends
 	/// to your endpoints by including a hashed_order field
 	/// on the event payload. This allows you to validate that
 	/// the events were sent by OpenNode and not by a third party.
-	pub hashed_order: String,
+	pub hashed_order: Option<String>,
 }
 
 
@@ -87,8 +87,8 @@ pub fn create(client: &Client, payload: Payload) -> impl Future<Item=Charge, Err
 }
 
 /// Retrieve charge with the given id
-pub fn get(client: &Client, id: u64) -> impl Future<Item=Charge, Error=Error> {
-    client.get(format!("/charges/{}", id), None as Option<String>)
+pub fn get(client: &Client, id: &str) -> impl Future<Item=Charge, Error=Error> {
+    client.get(format!("/charge/{}", id), None as Option<String>)
 }
 
 
