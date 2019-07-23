@@ -42,7 +42,7 @@ To get started, create a client:
 let client = opennode::client::Client::new("OPENNODE-TOKEN");
 ```
 
-Let's create a new charge using an actor system like actix_rt:
+Let's create a new charge using an actor system like [actix_rt](https://crates.io/crates/actix-rt):
 
 ```rust
 use opennode::charge;
