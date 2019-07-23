@@ -86,7 +86,7 @@ impl Client {
                 }).and_then(|(_, body)| {
                     serde_json::from_slice(&body)
                         .map_err(|e| {Error::Payload(awc::error::JsonPayloadError::Deserialize(e))})
-                        .map(move |res: Response<T>| res.data)
+                        .map(|res: Response<T>| res.data)
                 })
         }
 }

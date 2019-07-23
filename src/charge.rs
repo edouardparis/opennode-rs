@@ -51,18 +51,25 @@ pub struct Payload {
     /// Charge's price in satoshis, unless currency parameter is used.
     pub amount: u64,
     /// Charge's description
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
     /// Charge's currency
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub currency: Option<String>,
     /// Customer's email
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub customer_email: Option<String>,
     /// Customer's name
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub customer_name: Option<String>,
     /// URL to receive webhooks
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub callback_url: Option<String>,
     /// URL to redirect user after payment
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub success_url: Option<String>,
     /// Convert to merchant's currency (needs Bank account enabled)
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub auto_settle: Option<String>
 }
 
