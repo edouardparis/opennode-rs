@@ -21,17 +21,17 @@ pub struct Charge {
 	/// Charge value at issue time
 	pub fiat_value: f64,
 	/// Charge currency
-	pub currency: String,
+	pub currency: Option<String>,
 	/// timestamp
 	pub created_at: u64,
 	/// URL where user gets redirected after payment
-	pub success_url: String,
+	pub success_url: Option<String>,
 	/// Charge notes
 	pub notes: String,
 	/// Charge requested instant exchange
 	pub auto_settle: bool,
 	/// External order ID
-	pub order_id: String,
+	pub order_id: Option<String>,
 	/// Charge payment details
 	pub chain_invoice: Option<invoice::Chain>,
 	/// lightning_invoice
@@ -96,6 +96,11 @@ pub fn create(client: &Client, payload: Payload) -> impl Future<Item=Charge, Err
 /// Retrieve charge with the given id
 pub fn get(client: &Client, id: &str) -> impl Future<Item=Charge, Error=Error> {
     client.get(format!("/charge/{}", id), None as Option<String>)
+}
+
+/// Retrieve paid charges.
+pub fn list(client: &Client) -> impl Future<Item=Vec<Charge>, Error=Error> {
+    client.get("/charges", None as Option<String>)
 }
 
 

@@ -11,6 +11,9 @@ use opennode::charge;
 /// Get a charge with the given id:
 /// `cargo run --example charge -- --key=<KEY> get <ID>`
 ///
+/// List paid charges:
+/// `cargo run --example charge -- --key=<KEY> list`
+///
 fn main() {
     let app = App::new("charge")
         .arg(Arg::with_name("key")
@@ -34,7 +37,9 @@ fn main() {
                          .value_name("ID")
                          .help("id of the charge")
                          .required(true)
-                         .takes_value(true)));
+                         .takes_value(true)))
+        .subcommand(SubCommand::with_name("list")
+                    .about("retrieve paid charges"));
 
     let matches = app.get_matches();
     let api_key = matches.value_of("key").unwrap();
@@ -43,6 +48,7 @@ fn main() {
     match matches.subcommand() {
         ("create", Some(m)) => create(m, &client),
         ("get", Some(m)) => get(m, &client),
+        ("list", _) => list(&client),
         _ => (),
     }
 }
@@ -64,4 +70,12 @@ fn get(matches: &ArgMatches, client: &Client) {
     })).unwrap();
 
     println!("{:?}", charge)
+}
+
+fn list(client: &Client) {
+    let charges: Vec<charge::Charge> = System::new("test").block_on(lazy(|| {
+        charge::list(&client)
+    })).unwrap();
+
+    println!("{:?}", charges)
 }

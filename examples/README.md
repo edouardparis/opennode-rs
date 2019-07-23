@@ -7,3 +7,6 @@ Create a new charge:
 
 Get a charge with the given id:
 `cargo run --example charge -- --key=<KEY> get <ID>`
+
+List paid charges:
+`cargo run --example charge -- --key=<KEY> list`
