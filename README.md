@@ -1,5 +1,8 @@
 # opennode
 
+[![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/edouardparis/opennode-rs/blob/master/LICENSE)
+[![tippin.me](https://badgen.net/badge/%E2%9A%A1%EF%B8%8Ftippin.me/@edouardparis/F0918E)](https://tippin.me/@edouardparis)
+
 Rust API bindings for the Opennode v1 HTTP API.
 This library rely on rust Futures to allow asynchronous usage.
 
