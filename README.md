@@ -39,5 +39,19 @@ cargo run --example <example> -- <example flags> <example args>
 To get started, create a client:
 
 ```rust
-let client = opennode::client::Client::new();
+let client = opennode::client::Client::new("OPENNODE-TOKEN");
 ```
+
+Let's create a new charge using an actor system like actix_rt:
+
+```rust
+use opennode::charge;
+
+// opennode::charge::create signature:
+// (client: &Client, payload: Payload) -> impl Future<Item=Charge, Error=Error>
+
+let charge: charge::Charge = System::new("test").block_on(lazy(|| {
+    charge::create(&client, charge::Payload::new(1000))
+})).unwrap();
+```
+
