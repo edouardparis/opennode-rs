@@ -57,4 +57,3 @@ let charge: charge::Charge = System::new("test").block_on(lazy(|| {
     charge::create(&client, charge::Payload::new(1000))
 })).unwrap();
 ```
-

@@ -22,6 +22,20 @@ Get a refund with the given id:
 List paid refunds:
 `cargo run --example refund -- --key=<KEY> list`
 
+## Withdrawal
+
+Create a new withdrawal with a lightning invoice:
+`cargo run --example withdrawal -- --key=<KEY> create --invoice=<INVOICE>`
+
+Create a new withdrawal with a bitcoin address:
+`cargo run --example withdrawal -- --key=<KEY> create --address=<ADDRESS> --amount=<AMOUNT>`
+
+Get a withdrawal with the given id:
+`cargo run --example withdrawal -- --key=<KEY> get <ID>`
+
+List paid withdrawals:
+`cargo run --example withdrawal -- --key=<KEY> list`
+
 ## Account
 
 Retrieve account balance:
@@ -36,4 +50,3 @@ List supported currencies:
 
 List current rates:
 `cargo run --example rates`
-
