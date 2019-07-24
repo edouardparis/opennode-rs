@@ -4,6 +4,7 @@ use serde::{Serialize, Deserialize};
 use crate::invoice;
 use crate::client::Client;
 use crate::error::Error;
+use crate::currency::Currency;
 
 /// Charge is a charge resource.
 #[derive(Debug, Serialize, Deserialize)]
@@ -21,7 +22,7 @@ pub struct Charge {
     /// Charge value at issue time
     pub fiat_value: f64,
     /// Charge currency
-    pub currency: Option<String>,
+    pub currency: Option<Currency>,
     /// timestamp
     pub created_at: u64,
     /// URL where user gets redirected after payment
@@ -55,7 +56,7 @@ pub struct Payload {
     pub description: Option<String>,
     /// Charge's currency
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub currency: Option<String>,
+    pub currency: Option<Currency>,
     /// Customer's email
     #[serde(skip_serializing_if = "Option::is_none")]
     pub customer_email: Option<String>,

@@ -21,3 +21,9 @@ Get a refund with the given id:
 
 List paid refunds:
 `cargo run --example refund -- --key=<KEY> list`
+
+## Currencies
+
+List available currencies:
+`cargo run --example currencies -- --key=<KEY>`
+
