@@ -22,8 +22,18 @@ Get a refund with the given id:
 List paid refunds:
 `cargo run --example refund -- --key=<KEY> list`
 
+## Account
+
+Retrieve account balance:
+`cargo run --example account -- --key=<KEY>`
+
 ## Currencies
 
-List available currencies:
-`cargo run --example currencies -- --key=<KEY>`
+List supported currencies:
+`cargo run --example currencies`
+
+## Rates
+
+List current rates:
+`cargo run --example rates`
 
