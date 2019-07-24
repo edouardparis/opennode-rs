@@ -13,7 +13,7 @@ pub struct Refund {
     /// Bitcoin address to send the funds
     pub address: String,
     /// unpaid/processing/paid
-    pub status: String,
+    pub status: Status,
     /// Refund fee in satoshis
     pub fee: Option<u64>,
     /// Buyer email to get notified of the refund
@@ -22,6 +22,16 @@ pub struct Refund {
     pub created_at: u64,
     /// timestamp
     pub processed_at: Option<u64>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub enum Status {
+    #[serde(rename = "unpaid")]
+    Unpaid,
+    #[serde(rename = "paid")]
+    Paid,
+    #[serde(rename = "processing")]
+    Processing
 }
 
 /// Payload is a refund payload.

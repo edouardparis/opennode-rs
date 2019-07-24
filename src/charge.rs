@@ -16,7 +16,7 @@ pub struct Charge {
     pub amount: u64,
     /// Charge status
     /// unpaid/processing/paid
-    pub status: String,
+    pub status: Status,
     /// Charge fee in satoshis
     pub fee: Option<u64>,
     /// Charge value at issue time
@@ -45,6 +45,15 @@ pub struct Charge {
     pub hashed_order: Option<String>,
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+pub enum Status {
+    #[serde(rename = "unpaid")]
+    Unpaid,
+    #[serde(rename = "paid")]
+    Paid,
+    #[serde(rename = "processing")]
+    Processing
+}
 
 /// Payload is a charge payload.
 #[derive(Debug, Serialize, Deserialize)]
