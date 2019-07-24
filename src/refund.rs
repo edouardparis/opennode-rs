@@ -26,12 +26,10 @@ pub struct Refund {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub enum Status {
-    #[serde(rename = "unpaid")]
-    Unpaid,
-    #[serde(rename = "paid")]
-    Paid,
-    #[serde(rename = "processing")]
-    Processing
+    #[serde(rename = "confirmed")]
+    Confirmed,
+    #[serde(rename = "pending")]
+    Pending
 }
 
 /// Payload is a refund payload.
