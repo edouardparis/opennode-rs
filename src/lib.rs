@@ -1,3 +1,4 @@
+pub mod account;
 pub mod charge;
 pub mod client;
 pub mod currency;
