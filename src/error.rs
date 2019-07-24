@@ -1,5 +1,4 @@
-use awc;
-
+use awc::error::{SendRequestError, JsonPayloadError};
 use serde::{Serialize, Deserialize};
 
 #[derive(Debug)]
@@ -7,9 +6,9 @@ pub enum Error {
     /// An error reported by Opennode in the response body.
     Opennode(RequestError),
     /// A networking error communicating with the Opennode server.
-    Http(awc::error::SendRequestError),
+    Http(SendRequestError),
     /// A set of errors that can occur during parsing payloads.
-    Payload(awc::error::JsonPayloadError),
+    Payload(JsonPayloadError),
     /// Indicates an operation not supported (yet?) by this library.
     Unsupported(&'static str),
 }
