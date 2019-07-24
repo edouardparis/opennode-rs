@@ -8,40 +8,40 @@ use crate::error::Error;
 /// Charge is a charge resource.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Charge {
-	pub id: String,
-	/// Charge Description
-	pub description: String,
-	/// Charge price in satoshis
-	pub amount: u64,
-	/// Charge status
-	/// unpaid/processing/paid
-	pub status: String,
-	/// Charge fee in satoshis
-	pub fee: Option<u64>,
-	/// Charge value at issue time
-	pub fiat_value: f64,
-	/// Charge currency
-	pub currency: Option<String>,
-	/// timestamp
-	pub created_at: u64,
-	/// URL where user gets redirected after payment
-	pub success_url: Option<String>,
-	/// Charge notes
-	pub notes: String,
-	/// Charge requested instant exchange
-	pub auto_settle: bool,
-	/// External order ID
-	pub order_id: Option<String>,
-	/// Charge payment details
-	pub chain_invoice: Option<invoice::Chain>,
-	/// lightning_invoice
-	pub lightning_invoice: Option<invoice::Lightning>,
-	/// Hashed Order
-	/// OpenNode signs all charge related events it sends
-	/// to your endpoints by including a hashed_order field
-	/// on the event payload. This allows you to validate that
-	/// the events were sent by OpenNode and not by a third party.
-	pub hashed_order: Option<String>,
+    pub id: String,
+    /// Charge Description
+    pub description: String,
+    /// Charge price in satoshis
+    pub amount: u64,
+    /// Charge status
+    /// unpaid/processing/paid
+    pub status: String,
+    /// Charge fee in satoshis
+    pub fee: Option<u64>,
+    /// Charge value at issue time
+    pub fiat_value: f64,
+    /// Charge currency
+    pub currency: Option<String>,
+    /// timestamp
+    pub created_at: u64,
+    /// URL where user gets redirected after payment
+    pub success_url: Option<String>,
+    /// Charge notes
+    pub notes: String,
+    /// Charge requested instant exchange
+    pub auto_settle: bool,
+    /// External order ID
+    pub order_id: Option<String>,
+    /// Charge payment details
+    pub chain_invoice: Option<invoice::Chain>,
+    /// lightning_invoice
+    pub lightning_invoice: Option<invoice::Lightning>,
+    /// Hashed Order
+    /// OpenNode signs all charge related events it sends
+    /// to your endpoints by including a hashed_order field
+    /// on the event payload. This allows you to validate that
+    /// the events were sent by OpenNode and not by a third party.
+    pub hashed_order: Option<String>,
 }
 
 
@@ -102,5 +102,3 @@ pub fn get(client: &Client, id: &str) -> impl Future<Item=Charge, Error=Error> {
 pub fn list(client: &Client) -> impl Future<Item=Vec<Charge>, Error=Error> {
     client.get("/charges", None as Option<String>)
 }
-
-
