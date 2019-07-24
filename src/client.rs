@@ -1,14 +1,13 @@
+use actix_http::body::Body;
+use awc;
 use futures::future::Future;
-use crate::error::Error;
 use serde::Serialize;
 use serde::de::DeserializeOwned;
-
-use awc;
+use serde::{Deserialize};
 use serde;
 use serde_json;
-use serde::{Deserialize};
 
-use actix_http::body::Body;
+use crate::error;
 
 pub struct Client {
     client: awc::Client,
@@ -50,7 +49,7 @@ impl Client {
         clt
     }
 
-    pub fn get<T, S, U>(&self, path: S, params: Option<U>) -> impl Future<Item=T, Error=Error>
+    pub fn get<T, S, U>(&self, path: S, params: Option<U>) -> impl Future<Item=T, Error=error::Error>
         where T: DeserializeOwned, S: Into<String>, U: Into<String> {
             let p = params.map_or("".to_string(), |par|(par.into()));
             let req = self.client
@@ -60,7 +59,7 @@ impl Client {
             self.send(req, Body::Empty)
         }
 
-    pub fn post<T, S, P>(&self, path: S, payload: Option<P>) -> impl Future<Item=T, Error=Error>
+    pub fn post<T, S, P>(&self, path: S, payload: Option<P>) -> impl Future<Item=T, Error=error::Error>
         where T: DeserializeOwned, S: Into<String>, P: Serialize {
             let req = self.client
                 .post(self.host.to_owned()+"/"+&self.version+&path.into())
@@ -76,16 +75,22 @@ impl Client {
             }
         }
 
-    fn send<T>(&self, req: awc::ClientRequest, body: Body) -> impl Future<Item=T, Error=Error>
+
+    fn send<T>(&self, req: awc::ClientRequest, body: Body) -> impl Future<Item=T, Error=error::Error>
         where T: serde::de::DeserializeOwned {
-            req.send_body(body).map_err(|e| {Error::Http(e)})
+            req.send_body(body).map_err(|e| {error::Error::Http(e)})
                 .and_then(|mut resp| {
                     resp.body().map(move |body_out| {
                         (resp, body_out)
-                    }).map_err(|e| {Error::Payload(awc::error::JsonPayloadError::Payload(e))})
-                }).and_then(|(_, body)| {
+                    }).map_err(|e| {error::Error::Payload(awc::error::JsonPayloadError::Payload(e))})
+                }).and_then(|(res, body)| {
+                    if !res.status().is_success() {
+                        let err: error::RequestError = serde_json::from_slice(&body)
+                            .map_err(|e| {error::Error::Payload(awc::error::JsonPayloadError::Deserialize(e))})?;
+                        return Err(error::Error::Opennode(err))
+                    }
                     serde_json::from_slice(&body)
-                        .map_err(|e| {Error::Payload(awc::error::JsonPayloadError::Deserialize(e))})
+                        .map_err(|e| {error::Error::Payload(awc::error::JsonPayloadError::Deserialize(e))})
                         .map(|res: Response<T>| res.data)
                 })
         }
