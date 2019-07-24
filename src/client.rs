@@ -1,9 +1,8 @@
 use actix_http::body::Body;
 use awc;
 use futures::future::Future;
-use serde::Serialize;
 use serde::de::DeserializeOwned;
-use serde::{Deserialize};
+use serde::{Deserialize, Serialize};
 use serde;
 use serde_json;
 
