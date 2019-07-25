@@ -1,3 +1,24 @@
+/// About Authentication:
+///
+/// The OpenNode API uses API Keys to authenticate requests.
+/// You can view and manage your API Keys in the Integrations dashboard.
+/// Development mode keys are generated on the Development environment,
+/// while Production mode keys are generated on the Production environment.
+///
+/// Authentication to the API is performed with a key.
+/// Provide your API key on on the Authorization header.
+///
+/// All API requests must be made over HTTPS.
+/// Calls made over plain HTTP will fail.
+/// API Requests without authentication will also fail.
+///
+/// | Permission                        | Invoice | Read | Withdrawals |
+/// |-----------------------------------|---------|------|-------------|
+/// | Create charge & fetch charge info |   ✅    |  ✅  |    ✅       |
+/// | Fetch charges & withdrawals info  |   ❌    |  ✅  |    ✅       |
+/// | Initiate withdrawals              |   ❌    |  ❌  |    ✅       |
+
+
 use actix_http::body::Body;
 use awc;
 use futures::future::Future;
@@ -7,6 +28,7 @@ use serde;
 use serde_json;
 
 use crate::error;
+
 
 pub struct Client {
     client: awc::Client,
