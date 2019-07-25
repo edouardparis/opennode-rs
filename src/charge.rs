@@ -100,15 +100,15 @@ impl Payload {
 
 /// Create charge
 pub fn create(client: &Client, payload: Payload) -> impl Future<Item=Charge, Error=Error> {
-    client.post("/charges", Some(payload))
+    client.post("/v1/charges", Some(payload))
 }
 
 /// Retrieve charge with the given id
 pub fn get(client: &Client, id: &str) -> impl Future<Item=Charge, Error=Error> {
-    client.get(format!("/charge/{}", id), None as Option<String>)
+    client.get(format!("/v1/charge/{}", id), None as Option<String>)
 }
 
 /// Retrieve paid charges.
 pub fn list(client: &Client) -> impl Future<Item=Vec<Charge>, Error=Error> {
-    client.get("/charges", None as Option<String>)
+    client.get("/v1/charges", None as Option<String>)
 }

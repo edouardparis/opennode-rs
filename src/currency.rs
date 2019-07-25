@@ -6,7 +6,7 @@ use crate::error::Error;
 
 /// Retrieve available currencies.
 pub fn list(client: &Client) -> impl Future<Item=Vec<Currency>, Error=Error> {
-    client.get("/currencies", None as Option<String>)
+    client.get("/v1/currencies", None as Option<String>)
 }
 
 #[derive(Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]

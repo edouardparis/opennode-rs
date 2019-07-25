@@ -11,7 +11,6 @@ use crate::error;
 pub struct Client {
     client: awc::Client,
     host: String,
-    version: String,
     api_key: String,
 }
 
@@ -31,7 +30,6 @@ impl Client {
         Client {
             client: awc::Client::new(),
             api_key: apikey.into(),
-            version: "v1".to_string(),
             host: host.into(),
         }
     }
@@ -52,7 +50,7 @@ impl Client {
         where T: DeserializeOwned, S: Into<String>, U: Into<String> {
             let p = params.map_or("".to_string(), |par|(par.into()));
             let req = self.client
-                .get(self.host.to_owned()+"/"+&self.version+&path.into()+&p)
+                .get(self.host.to_owned()+&path.into()+&p)
                 .header("Authorization", self.api_key.clone());
 
             self.send(req, Body::Empty)
@@ -61,7 +59,7 @@ impl Client {
     pub fn post<T, S, P>(&self, path: S, payload: Option<P>) -> impl Future<Item=T, Error=error::Error>
         where T: DeserializeOwned, S: Into<String>, P: Serialize {
             let req = self.client
-                .post(self.host.to_owned()+"/"+&self.version+&path.into())
+                .post(self.host.to_owned()+&path.into())
                 .content_type("application/json")
                 .header("Authorization", self.api_key.clone());
 

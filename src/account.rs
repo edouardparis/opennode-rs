@@ -15,5 +15,5 @@ pub struct Balance {
 
 /// Retrieve account balance.
 pub fn balance(client: &Client) -> impl Future<Item=Balance, Error=Error> {
-    client.get("/account/balance", None as Option<String>)
+    client.get("/v1/account/balance", None as Option<String>)
 }

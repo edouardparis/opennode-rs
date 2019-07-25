@@ -65,15 +65,15 @@ impl Payload {
 
 /// Create withdrawal
 pub fn create(client: &Client, payload: Payload) -> impl Future<Item=Withdrawal, Error=Error> {
-    client.post("/withdrawals", Some(payload))
+    client.post("/v2/withdrawals", Some(payload))
 }
 
 /// Retrieve withdrawal with the given id
 pub fn get(client: &Client, id: &str) -> impl Future<Item=Withdrawal, Error=Error> {
-    client.get(format!("/withdrawal/{}", id), None as Option<String>)
+    client.get(format!("/v1/withdrawal/{}", id), None as Option<String>)
 }
 
 /// Retrieve withdrawals.
 pub fn list(client: &Client) -> impl Future<Item=Vec<Withdrawal>, Error=Error> {
-    client.get("/withdrawals", None as Option<String>)
+    client.get("/v1/withdrawals", None as Option<String>)
 }

@@ -11,5 +11,5 @@ pub type Rates = HashMap<String, HashMap<Currency, f64>>;
 
 /// Retrieve rate list.
 pub fn list(client: &Client) -> impl Future<Item=Rates, Error=Error> {
-    client.get("/rates", None as Option<String>)
+    client.get("/v1/rates", None as Option<String>)
 }
