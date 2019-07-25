@@ -75,7 +75,7 @@ impl Client {
                 .get(self.host.to_owned()+&path.into()+&p)
                 .header("Authorization", self.api_key.clone());
 
-            self.send(req, Body::Empty)
+            Client::send(req, Body::Empty)
         }
 
     pub fn post<T, S, P>(&self, path: S, payload: Option<P>) -> impl Future<Item=T, Error=error::Error>
@@ -86,16 +86,16 @@ impl Client {
                 .header("Authorization", self.api_key.clone());
 
             match payload {
-                None=> self.send(req, Body::Empty),
+                None=> Client::send(req, Body::Empty),
                 Some(p) => {
                     let body = serde_json::to_vec(&p).unwrap();
-                    self.send(req, Body::Bytes(body.into()))
+                    Client::send(req, Body::Bytes(body.into()))
                 }
             }
         }
 
 
-    fn send<T>(&self, req: awc::ClientRequest, body: Body) -> impl Future<Item=T, Error=error::Error>
+    fn send<T>(req: awc::ClientRequest, body: Body) -> impl Future<Item=T, Error=error::Error>
         where T: serde::de::DeserializeOwned {
             req.send_body(body).map_err(|e| {error::Error::Http(e)})
                 .and_then(|mut resp| {
