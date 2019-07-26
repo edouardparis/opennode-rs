@@ -12,10 +12,12 @@ use serde::{Serialize, Deserialize};
 
 use crate::refund::Refund;
 use crate::transaction::Transaction;
+use crate::charge::Status;
+use crate::charge::Withdrawal;
 
-/// Event is a event resource.
+/// Charge is a event resource.
 #[derive(Debug, Serialize, Deserialize)]
-pub struct Event {
+pub struct Charge {
     pub id: String,
     /// URL where webhooks is sent
     pub callback_url: Option<String>,
@@ -42,23 +44,20 @@ pub struct Event {
     pub transactions: Option<Vec<Transaction>>,
     /// Refund information
     pub refund: Option<Refund>
+
     /// Hashed Order
     /// OpenNode signs all charge related events it sends
     /// to your endpoints by including a hashed_order field
     /// on the event payload. This allows you to validate that
     /// the events were sent by OpenNode and not by a third party.
+    ///
+    /// You can verify the signatures by computing an HMAC with the SHA256 hash function. Use the
+    /// api-key used on the charge creation as the key, and the charge id as the message.
     pub hashed_order: Option<String>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-pub enum Status {
-    #[serde(rename = "paid")]
-    Paid,
-    #[serde(rename = "processing")]
-    Processing,
-    #[serde(rename = "refunded")]
-    Refunded,
-    #[serde(rename = "underpaid")]
-    Underpaid,
-}
-
+/// When initiating a Lightning Network withdrawal, you can register a webhook URL
+/// (via callback_url parameter). The webhook URL will notify you if your payment succeeded
+/// or failed to reach its destination.
+/// Withdrawal is a the webhook resource.
+type struct Withdrawal = Withdrawal;

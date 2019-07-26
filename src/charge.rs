@@ -52,7 +52,11 @@ pub enum Status {
     #[serde(rename = "paid")]
     Paid,
     #[serde(rename = "processing")]
-    Processing
+    Processing,
+    #[serde(rename = "underpaid")]
+    Underpaid,
+    #[serde(rename = "refunded")]
+    Refunded,
 }
 
 /// Payload is a charge payload.

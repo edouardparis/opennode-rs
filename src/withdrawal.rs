@@ -25,11 +25,15 @@ pub struct Withdrawal {
     pub processed_at: Option<u64>,
     /// error if status == failed
     pub error: Option<String>,
+
     /// Hashed Order
     /// OpenNode signs all charge related events it sends
     /// to your endpoints by including a hashed_order field
     /// on the event payload. This allows you to validate that
     /// the events were sent by OpenNode and not by a third party.
+    ///
+    /// You can verify the signatures by computing an HMAC with the SHA256 hash function. Use the
+    /// api-key used on the charge creation as the key, and the charge id as the message.
     pub hashed_order: Option<String>,
 }
 
