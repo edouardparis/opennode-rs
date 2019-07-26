@@ -8,6 +8,11 @@ use crate::error::Error;
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Withdrawal {
     pub id: String,
+    /// Withdrawal amount in satoshis
+    pub amount: u64,
+    /// Withdrawal fiat_value
+    pub fiat_value: Option<u64>,
+    /// kind of the transaction ln/chain
     #[serde(rename = "type")]
     pub kind: Type,
     /// invoice or tx
@@ -17,7 +22,15 @@ pub struct Withdrawal {
     /// unpaid/processing/paid
     pub status: Status,
     /// timestamp
-    pub processed_at: Option<u64>
+    pub processed_at: Option<u64>,
+    /// error if status == failed
+    pub error: Option<String>,
+    /// Hashed Order
+    /// OpenNode signs all charge related events it sends
+    /// to your endpoints by including a hashed_order field
+    /// on the event payload. This allows you to validate that
+    /// the events were sent by OpenNode and not by a third party.
+    pub hashed_order: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -33,7 +46,9 @@ pub enum Status {
     #[serde(rename = "confirmed")]
     Confirmed,
     #[serde(rename = "pending")]
-    Pending
+    Pending,
+    #[serde(rename = "failed")]
+    Failed
 }
 
 /// Payload is a withdrawal payload.
