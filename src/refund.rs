@@ -1,5 +1,5 @@
 use futures::future::Future;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 use crate::client::Client;
 use crate::error::Error;
@@ -31,7 +31,7 @@ pub enum Status {
     #[serde(rename = "confirmed")]
     Confirmed,
     #[serde(rename = "pending")]
-    Pending
+    Pending,
 }
 
 /// Payload is a refund payload.
@@ -48,7 +48,7 @@ pub struct Payload {
 
 impl Payload {
     pub fn new(id: impl Into<String>, address: impl Into<String>) -> Payload {
-        Payload{
+        Payload {
             checkout_id: id.into(),
             address: address.into(),
             email: None,
@@ -57,16 +57,16 @@ impl Payload {
 }
 
 /// Create refund
-pub fn create(client: &Client, payload: Payload) -> impl Future<Item=Refund, Error=Error> {
+pub fn create(client: &Client, payload: Payload) -> impl Future<Item = Refund, Error = Error> {
     client.post("/v1/refunds", Some(payload))
 }
 
 /// Retrieve refund with the given id
-pub fn get(client: &Client, id: &str) -> impl Future<Item=Refund, Error=Error> {
+pub fn get(client: &Client, id: &str) -> impl Future<Item = Refund, Error = Error> {
     client.get(format!("/v1/refund/{}", id), None as Option<String>)
 }
 
 /// Retrieve refunds.
-pub fn list(client: &Client) -> impl Future<Item=Vec<Refund>, Error=Error> {
+pub fn list(client: &Client) -> impl Future<Item = Vec<Refund>, Error = Error> {
     client.get("/v1/refunds", None as Option<String>)
 }

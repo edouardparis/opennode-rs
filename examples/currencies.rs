@@ -1,5 +1,5 @@
-use futures::future::{lazy};
 use actix_rt::System;
+use futures::future::lazy;
 
 use opennode::client::Client;
 use opennode::currency;
@@ -10,9 +10,9 @@ use opennode::currency;
 fn main() {
     let client = Client::from_url("https://dev-api.opennode.co", "");
 
-    let currencies: Vec<currency::Currency> = System::new("test").block_on(lazy(|| {
-        currency::list(&client)
-    })).unwrap();
+    let currencies: Vec<currency::Currency> = System::new("test")
+        .block_on(lazy(|| currency::list(&client)))
+        .unwrap();
 
     println!("{:?}", currencies)
 }

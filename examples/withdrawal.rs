@@ -1,6 +1,6 @@
-use futures::future::{lazy};
 use actix_rt::System;
-use clap::{Arg, ArgMatches, App, SubCommand};
+use clap::{App, Arg, ArgMatches, SubCommand};
+use futures::future::lazy;
 
 use opennode::client::Client;
 use opennode::withdrawal;
@@ -19,43 +19,56 @@ use opennode::withdrawal;
 ///
 fn main() {
     let app = App::new("withdrawal")
-        .arg(Arg::with_name("key")
-             .short("k")
-             .long("key")
-             .help("opennode api_key")
-             .value_name("KEY")
-             .required(true)
-             .takes_value(true))
-        .subcommand(SubCommand::with_name("create")
-                    .about("creates a new withdrawal")
-                    .arg(Arg::with_name("amount")
-                         .short("amt")
-                         .long("amount")
-                         .value_name("AMOUNT")
-                         .help("withdrawal amount in satoshis")
-                         .required(false)
-                         .takes_value(true))
-                    .arg(Arg::with_name("address")
-                         .long("address")
-                         .value_name("ADDRESS")
-                         .help("withdrawal address on chain")
-                         .required(false)
-                         .takes_value(true))
-                    .arg(Arg::with_name("invoice")
-                         .long("invoice")
-                         .value_name("INVOICE")
-                         .help("withdrawal invoice")
-                         .required(false)
-                         .takes_value(true)))
-       .subcommand(SubCommand::with_name("get")
-                    .about("retrieve a withdrawal with the given id")
-                    .arg(Arg::with_name("id")
-                         .value_name("ID")
-                         .help("id of the withdrawal")
-                         .required(true)
-                         .takes_value(true)))
-        .subcommand(SubCommand::with_name("list")
-                    .about("retrieve withdrawals"));
+        .arg(
+            Arg::with_name("key")
+                .short("k")
+                .long("key")
+                .help("opennode api_key")
+                .value_name("KEY")
+                .required(true)
+                .takes_value(true),
+        )
+        .subcommand(
+            SubCommand::with_name("create")
+                .about("creates a new withdrawal")
+                .arg(
+                    Arg::with_name("amount")
+                        .short("amt")
+                        .long("amount")
+                        .value_name("AMOUNT")
+                        .help("withdrawal amount in satoshis")
+                        .required(false)
+                        .takes_value(true),
+                )
+                .arg(
+                    Arg::with_name("address")
+                        .long("address")
+                        .value_name("ADDRESS")
+                        .help("withdrawal address on chain")
+                        .required(false)
+                        .takes_value(true),
+                )
+                .arg(
+                    Arg::with_name("invoice")
+                        .long("invoice")
+                        .value_name("INVOICE")
+                        .help("withdrawal invoice")
+                        .required(false)
+                        .takes_value(true),
+                ),
+        )
+        .subcommand(
+            SubCommand::with_name("get")
+                .about("retrieve a withdrawal with the given id")
+                .arg(
+                    Arg::with_name("id")
+                        .value_name("ID")
+                        .help("id of the withdrawal")
+                        .required(true)
+                        .takes_value(true),
+                ),
+        )
+        .subcommand(SubCommand::with_name("list").about("retrieve withdrawals"));
 
     let matches = app.get_matches();
     let api_key = matches.value_of("key").unwrap();
@@ -85,26 +98,28 @@ fn create(matches: &ArgMatches, client: &Client) {
         withdrawal::Type::Chain => matches.value_of("address").unwrap(),
     };
 
-    let withdrawal: withdrawal::Withdrawal = System::new("test").block_on(lazy(|| {
-        withdrawal::create(&client, withdrawal::Payload::new(kind, address, amount))
-    })).unwrap();
+    let withdrawal: withdrawal::Withdrawal = System::new("test")
+        .block_on(lazy(|| {
+            withdrawal::create(&client, withdrawal::Payload::new(kind, address, amount))
+        }))
+        .unwrap();
 
     println!("{:?}", withdrawal)
 }
 
 fn get(matches: &ArgMatches, client: &Client) {
     let id = matches.value_of("id").unwrap();
-    let withdrawal: withdrawal::Withdrawal = System::new("test").block_on(lazy(|| {
-        withdrawal::get(&client, id)
-    })).unwrap();
+    let withdrawal: withdrawal::Withdrawal = System::new("test")
+        .block_on(lazy(|| withdrawal::get(&client, id)))
+        .unwrap();
 
     println!("{:?}", withdrawal)
 }
 
 fn list(client: &Client) {
-    let withdrawals: Vec<withdrawal::Withdrawal> = System::new("test").block_on(lazy(|| {
-        withdrawal::list(&client)
-    })).unwrap();
+    let withdrawals: Vec<withdrawal::Withdrawal> = System::new("test")
+        .block_on(lazy(|| withdrawal::list(&client)))
+        .unwrap();
 
     println!("{:?}", withdrawals)
 }

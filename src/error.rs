@@ -1,5 +1,5 @@
-use awc::error::{SendRequestError, JsonPayloadError};
-use serde::{Serialize, Deserialize};
+use awc::error::{JsonPayloadError, SendRequestError};
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug)]
 pub enum Error {
@@ -17,6 +17,6 @@ pub enum Error {
 /// Example: `{\"success\":false,\"message\":\"Failed to authenticate token\"}"`
 #[derive(Debug, Serialize, Deserialize)]
 pub struct RequestError {
-   pub success: bool,
-   pub message: String,
+    pub success: bool,
+    pub message: String,
 }

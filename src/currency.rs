@@ -1,11 +1,11 @@
 use futures::future::Future;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 use crate::client::Client;
 use crate::error::Error;
 
 /// Retrieve available currencies.
-pub fn list(client: &Client) -> impl Future<Item=Vec<Currency>, Error=Error> {
+pub fn list(client: &Client) -> impl Future<Item = Vec<Currency>, Error = Error> {
     client.get("/v1/currencies", None as Option<String>)
 }
 

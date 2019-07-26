@@ -1,10 +1,10 @@
 use futures::future::Future;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
-use crate::invoice;
 use crate::client::Client;
-use crate::error::Error;
 use crate::currency::Currency;
+use crate::error::Error;
+use crate::invoice;
 
 /// Charge is a charge resource.
 #[derive(Debug, Serialize, Deserialize)]
@@ -84,12 +84,12 @@ pub struct Payload {
     pub success_url: Option<String>,
     /// Convert to merchant's currency (needs Bank account enabled)
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub auto_settle: Option<String>
+    pub auto_settle: Option<String>,
 }
 
 impl Payload {
     pub fn new(a: u64) -> Payload {
-        Payload{
+        Payload {
             amount: a,
             description: None,
             currency: None,
@@ -103,16 +103,16 @@ impl Payload {
 }
 
 /// Create charge
-pub fn create(client: &Client, payload: Payload) -> impl Future<Item=Charge, Error=Error> {
+pub fn create(client: &Client, payload: Payload) -> impl Future<Item = Charge, Error = Error> {
     client.post("/v1/charges", Some(payload))
 }
 
 /// Retrieve charge with the given id
-pub fn get(client: &Client, id: &str) -> impl Future<Item=Charge, Error=Error> {
+pub fn get(client: &Client, id: &str) -> impl Future<Item = Charge, Error = Error> {
     client.get(format!("/v1/charge/{}", id), None as Option<String>)
 }
 
 /// Retrieve paid charges.
-pub fn list(client: &Client) -> impl Future<Item=Vec<Charge>, Error=Error> {
+pub fn list(client: &Client) -> impl Future<Item = Vec<Charge>, Error = Error> {
     client.get("/v1/charges", None as Option<String>)
 }
