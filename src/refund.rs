@@ -15,9 +15,9 @@ pub struct Refund {
     /// unpaid/processing/paid
     pub status: Status,
     /// Amount in satoshis
-    pub amount: u64,
+    pub amount: String,
     /// Refund fee in satoshis
-    pub fee: Option<u64>,
+    pub fee: Option<String>,
     /// Buyer email to get notified of the refund
     pub email: Option<String>,
     /// timestamp
