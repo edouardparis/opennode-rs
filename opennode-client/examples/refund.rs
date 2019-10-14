@@ -2,8 +2,9 @@ use actix_rt::System;
 use clap::{App, Arg, ArgMatches, SubCommand};
 use futures::future::lazy;
 
-use opennode::client::Client;
 use opennode::refund;
+use opennode_client::*;
+use opennode_client::client::Client;
 
 /// Create a new refund:
 /// `cargo run --example refund -- --key=<KEY> create --id=<ID> --address=<ADDRESS>`
@@ -73,7 +74,7 @@ fn create(matches: &ArgMatches, client: &Client) {
     let address = matches.value_of("address").unwrap();
     let refund: refund::Refund = System::new("test")
         .block_on(lazy(|| {
-            refund::create(&client, refund::Payload::new(id, address))
+            create_refund(&client, refund::Payload::new(id, address))
         }))
         .unwrap();
 
@@ -83,7 +84,7 @@ fn create(matches: &ArgMatches, client: &Client) {
 fn get(matches: &ArgMatches, client: &Client) {
     let id = matches.value_of("id").unwrap();
     let refund: refund::Refund = System::new("test")
-        .block_on(lazy(|| refund::get(&client, id)))
+        .block_on(lazy(|| get_refund(&client, id)))
         .unwrap();
 
     println!("{:?}", refund)
@@ -91,7 +92,7 @@ fn get(matches: &ArgMatches, client: &Client) {
 
 fn list(client: &Client) {
     let refunds: Vec<refund::Refund> = System::new("test")
-        .block_on(lazy(|| refund::list(&client)))
+        .block_on(lazy(|| list_refunds(&client)))
         .unwrap();
 
     println!("{:?}", refunds)

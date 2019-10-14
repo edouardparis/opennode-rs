@@ -26,6 +26,7 @@ use serde::{Deserialize, Serialize};
 use serde_json;
 
 use crate::error;
+use opennode::error::RequestError;
 
 pub struct Client {
     client: awc::Client,
@@ -122,7 +123,7 @@ impl Client {
             })
             .and_then(|(res, body)| {
                 if !res.status().is_success() {
-                    let err: error::RequestError = serde_json::from_slice(&body).map_err(|e| {
+                    let err: RequestError = serde_json::from_slice(&body).map_err(|e| {
                         error::Error::Payload(awc::error::JsonPayloadError::Deserialize(e))
                     })?;
                     return Err(error::Error::Opennode(err));

@@ -3,7 +3,8 @@ use clap::{App, Arg, ArgMatches, SubCommand};
 use futures::future::lazy;
 
 use opennode::charge;
-use opennode::client::Client;
+use opennode_client::*;
+use opennode_client::client::Client;
 
 /// Create a new charge:
 /// `cargo run --example charge -- --key=<KEY> create --amount=2000`
@@ -67,7 +68,7 @@ fn create(matches: &ArgMatches, client: &Client) {
     let amount = a.parse::<u64>().unwrap();
     let charge: charge::Charge = System::new("test")
         .block_on(lazy(|| {
-            charge::create(&client, charge::Payload::new(amount))
+            create_charge(&client, charge::Payload::new(amount))
         }))
         .unwrap();
 
@@ -77,7 +78,7 @@ fn create(matches: &ArgMatches, client: &Client) {
 fn get(matches: &ArgMatches, client: &Client) {
     let id = matches.value_of("id").unwrap();
     let charge: charge::Charge = System::new("test")
-        .block_on(lazy(|| charge::get(&client, id)))
+        .block_on(lazy(|| get_charge(&client, id)))
         .unwrap();
 
     println!("{:?}", charge)
@@ -85,7 +86,7 @@ fn get(matches: &ArgMatches, client: &Client) {
 
 fn list(client: &Client) {
     let charges: Vec<charge::Charge> = System::new("test")
-        .block_on(lazy(|| charge::list(&client)))
+        .block_on(lazy(|| list_charges(&client)))
         .unwrap();
 
     println!("{:?}", charges)

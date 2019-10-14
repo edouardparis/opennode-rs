@@ -2,7 +2,8 @@ use actix_rt::System;
 use clap::{App, Arg, ArgMatches, SubCommand};
 use futures::future::lazy;
 
-use opennode::client::Client;
+use opennode_client::client::Client;
+use opennode_client::*;
 use opennode::withdrawal;
 
 /// Create a new withdrawal with a lightning invoice:
@@ -100,7 +101,7 @@ fn create(matches: &ArgMatches, client: &Client) {
 
     let withdrawal: withdrawal::Withdrawal = System::new("test")
         .block_on(lazy(|| {
-            withdrawal::create(&client, withdrawal::Payload::new(kind, address, amount))
+            create_withdrawal(&client, withdrawal::Payload::new(kind, address, amount))
         }))
         .unwrap();
 
@@ -110,7 +111,7 @@ fn create(matches: &ArgMatches, client: &Client) {
 fn get(matches: &ArgMatches, client: &Client) {
     let id = matches.value_of("id").unwrap();
     let withdrawal: withdrawal::Withdrawal = System::new("test")
-        .block_on(lazy(|| withdrawal::get(&client, id)))
+        .block_on(lazy(|| get_withdrawal(&client, id)))
         .unwrap();
 
     println!("{:?}", withdrawal)
@@ -118,7 +119,7 @@ fn get(matches: &ArgMatches, client: &Client) {
 
 fn list(client: &Client) {
     let withdrawals: Vec<withdrawal::Withdrawal> = System::new("test")
-        .block_on(lazy(|| withdrawal::list(&client)))
+        .block_on(lazy(|| list_withdrawals(&client)))
         .unwrap();
 
     println!("{:?}", withdrawals)

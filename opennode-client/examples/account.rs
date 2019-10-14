@@ -3,7 +3,7 @@ use clap::{App, Arg};
 use futures::future::lazy;
 
 use opennode::account;
-use opennode::client::Client;
+use opennode_client::client::Client;
 
 /// List currency:
 /// `cargo run --example account -- --key=<KEY>`
@@ -24,7 +24,7 @@ fn main() {
     let client = Client::from_url("https://dev-api.opennode.co", api_key);
 
     let balance: account::Balance = System::new("test")
-        .block_on(lazy(|| account::balance(&client)))
+        .block_on(lazy(|| opennode_client::get_account_balance(&client)))
         .unwrap();
 
     println!("{:?}", balance)
