@@ -1,6 +1,6 @@
 [package]
 name = "opennode"
-version = "0.1.0"
+version = "1.0.0"
 authors = ["Edouard Paris <m@edouard.paris>"]
 description = "API bindings for the Opennode v1 HTTP API"
 readme = "README.md"
