@@ -2,6 +2,7 @@
 name = "opennode-client"
 version = "0.1.0"
 authors = ["Edouard Paris <m@edouard.paris>"]
+description = "Client for the Opennode v1 HTTP API"
 edition = "2018"
 readme = "README.md"
 license = "MIT"
