@@ -1,13 +1,11 @@
-use actix_rt::System;
 use clap::{App, Arg};
-use futures::future::lazy;
 
 use opennode::account;
-use opennode_client::client::Client;
+use opennode_client::{client::Client, get_account_balance};
 
 /// List currency:
 /// `cargo run --example account -- --key=<KEY>`
-///
+#[tokio::main]
 fn main() {
     let app = App::new("account").arg(
         Arg::with_name("key")
@@ -23,9 +21,7 @@ fn main() {
     let api_key = matches.value_of("key").unwrap();
     let client = Client::from_url("https://dev-api.opennode.co", api_key);
 
-    let balance: account::Balance = System::new("test")
-        .block_on(lazy(|| opennode_client::get_account_balance(&client)))
-        .unwrap();
+    let balance: account::Balance = get_account_balance(&client).await.unwrap();
 
     println!("{:?}", balance)
 }
