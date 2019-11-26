@@ -3,7 +3,7 @@ use clap::{App, Arg};
 use opennode::account;
 use opennode_client::{client::Client, get_account_balance};
 
-/// List currency:
+/// Get account balance:
 /// `cargo run --example account -- --key=<KEY>`
 #[tokio::main]
 fn main() {
