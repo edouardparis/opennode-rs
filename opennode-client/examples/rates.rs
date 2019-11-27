@@ -6,7 +6,7 @@ use opennode_client::list_rates;
 /// `cargo run --example rates`
 ///
 #[tokio::main]
-fn main() {
+async fn main() {
     let client = Client::from_url("https://dev-api.opennode.co", "");
     let list: rate::Rates = list_rates(&client).await.unwrap();
     println!("{:?}", list)

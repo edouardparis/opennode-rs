@@ -6,7 +6,7 @@ use opennode_client::{client::Client, get_account_balance};
 /// Get account balance:
 /// `cargo run --example account -- --key=<KEY>`
 #[tokio::main]
-fn main() {
+async fn main() {
     let app = App::new("account").arg(
         Arg::with_name("key")
             .short("k")

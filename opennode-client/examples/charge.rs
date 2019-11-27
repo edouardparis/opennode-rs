@@ -13,7 +13,7 @@ use opennode_client::client::Client;
 /// List paid charges:
 /// `cargo run --example charge -- --key=<KEY> list`
 #[tokio::main]
-fn main() {
+async fn main() {
     let app = App::new("charge")
         .arg(
             Arg::with_name("key")
@@ -61,7 +61,7 @@ fn main() {
     }
 }
 
-async fn create(matches: &ArgMatches, client: &Client) {
+async fn create(matches: &ArgMatches<'_>, client: &Client) {
     let a = matches.value_of("amount").unwrap();
     let amount = a.parse::<u64>().unwrap();
     let charge: charge::Charge = create_charge(&client, charge::Payload::new(amount)).await.unwrap();
@@ -69,7 +69,7 @@ async fn create(matches: &ArgMatches, client: &Client) {
     println!("{:?}", charge)
 }
 
-async fn get(matches: &ArgMatches, client: &Client) {
+async fn get(matches: &ArgMatches<'_>, client: &Client) {
     let id = matches.value_of("id").unwrap();
     let charge: charge::Charge = get_charge(&client, id).await.unwrap();
 

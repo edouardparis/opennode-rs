@@ -16,7 +16,7 @@ use opennode_client::*;
 /// List paid withdrawals:
 /// `cargo run --example withdrawal -- --key=<KEY> list`
 #[tokio::main]
-fn main() {
+async fn main() {
     let app = App::new("withdrawal")
         .arg(
             Arg::with_name("key")
@@ -81,7 +81,7 @@ fn main() {
     }
 }
 
-async fn create(matches: &ArgMatches, client: &Client) {
+async fn create(matches: &ArgMatches<'_>, client: &Client) {
     let amount: Option<u64> = match matches.value_of("amount") {
         Some(v) => Some(v.parse::<u64>().unwrap()),
         None => None,
@@ -102,7 +102,7 @@ async fn create(matches: &ArgMatches, client: &Client) {
     println!("{:?}", withdrawal)
 }
 
-async fn get(matches: &ArgMatches, client: &Client) {
+async fn get(matches: &ArgMatches<'_>, client: &Client) {
     let id = matches.value_of("id").unwrap();
     let withdrawal: withdrawal::Withdrawal = get_withdrawal(&client, id).await.unwrap();
 

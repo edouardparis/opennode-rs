@@ -12,7 +12,7 @@ use opennode_client::client::Client;
 /// List paid refunds:
 /// `cargo run --example refund -- --key=<KEY> list`
 #[tokio::main]
-fn main() {
+async fn main() {
     let app = App::new("refund")
         .arg(
             Arg::with_name("key")
@@ -66,7 +66,7 @@ fn main() {
     }
 }
 
-async fn create(matches: &ArgMatches, client: &Client) {
+async fn create(matches: &ArgMatches<'_>, client: &Client) {
     let id = matches.value_of("charge_id").unwrap();
     let address = matches.value_of("address").unwrap();
     let refund: refund::Refund = create_refund(&client, refund::Payload::new(id, address))
@@ -76,7 +76,7 @@ async fn create(matches: &ArgMatches, client: &Client) {
     println!("{:?}", refund)
 }
 
-async fn get(matches: &ArgMatches, client: &Client) {
+async fn get(matches: &ArgMatches<'_>, client: &Client) {
     let id = matches.value_of("id").unwrap();
     let refund: refund::Refund = get_refund(&client, id)
         .await
