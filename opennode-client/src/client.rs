@@ -97,8 +97,9 @@ impl Client {
             body = serde_json::to_vec(&p).unwrap();
             content_type = "application/json".to_string();
         }
+        let url = self.host.to_owned() + path;
 
-        let res = self.client.post(path)
+        let res = self.client.post(&url)
             .header("Content-Type", content_type)
             .header("Authorization", self.api_key.clone())
             .body(body)
