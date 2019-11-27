@@ -17,25 +17,20 @@
 /// | Create charge & fetch charge info |   ✅    |  ✅  |    ✅       |
 /// | Fetch charges & withdrawals info  |   ❌    |  ✅  |    ✅       |
 /// | Initiate withdrawals              |   ❌    |  ❌  |    ✅       |
-use actix_http::body::Body;
-use awc;
-use futures::future::Future;
-use serde;
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 use serde_json;
 
-use crate::error;
-use opennode::error::RequestError;
+use crate::error::Error;
 
 pub struct Client {
-    client: awc::Client,
+    client: reqwest::Client,
     host: String,
     api_key: String,
 }
 
 #[derive(Debug, Deserialize)]
-pub struct Response<T> {
+pub struct Data<T> {
     pub data: T,
 }
 
@@ -48,7 +43,7 @@ impl Client {
     /// Creates a new client posted to a custom host.
     pub fn from_url(host: impl Into<String>, apikey: impl Into<String>) -> Client {
         Client {
-            client: awc::Client::new(),
+            client: reqwest::Client::new(),
             api_key: apikey.into(),
             host: host.into(),
         }
@@ -66,73 +61,58 @@ impl Client {
         clt
     }
 
-    pub fn get<T, S, U>(
-        &self,
-        path: S,
-        params: Option<U>,
-    ) -> impl Future<Item = T, Error = error::Error>
+    pub async fn get<S, T>(&self, path: &str, params: Option<S>) -> Result<T, Error>
     where
-        T: DeserializeOwned,
         S: Into<String>,
-        U: Into<String>,
+        T: DeserializeOwned,
     {
         let p = params.map_or("".to_string(), |par| (par.into()));
-        let req = self
-            .client
-            .get(self.host.to_owned() + &path.into() + &p)
-            .header("Authorization", self.api_key.clone());
+        let url = self.host.to_owned() + path + &p;
 
-        Client::send(req, Body::Empty)
-    }
+        let res = self.client.get(&url)
+            .header("Authorization", self.api_key.clone())
+            .send()
+            .await
+            .map_err(|e| Error::Http(e))?;
 
-    pub fn post<T, S, P>(
-        &self,
-        path: S,
-        payload: Option<P>,
-    ) -> impl Future<Item = T, Error = error::Error>
-    where
-        T: DeserializeOwned,
-        S: Into<String>,
-        P: Serialize,
-    {
-        let req = self
-            .client
-            .post(self.host.to_owned() + &path.into())
-            .content_type("application/json")
-            .header("Authorization", self.api_key.clone());
-
-        match payload {
-            None => Client::send(req, Body::Empty),
-            Some(p) => {
-                let body = serde_json::to_vec(&p).unwrap();
-                Client::send(req, Body::Bytes(body.into()))
-            }
+        if res.status().is_success() {
+            let d: Data<T> = res.json().await.map_err(|e| Error::Http(e))?;
+            return Ok(d.data);
         }
+
+        let e: opennode::error::RequestError = res.json().await.map_err(|e|{Error::Http(e)})?;
+        Err(Error::Opennode(e))
     }
 
-    fn send<T>(req: awc::ClientRequest, body: Body) -> impl Future<Item = T, Error = error::Error>
+
+    pub async fn post<P, T>(&self, path: &str, payload: Option<P>) -> Result<T, Error>
     where
-        T: serde::de::DeserializeOwned,
+        P: Serialize,
+        T: DeserializeOwned,
     {
-        req.send_body(body)
-            .map_err(|e| error::Error::Http(e))
-            .and_then(|mut resp| {
-                resp.body()
-                    .map(move |body_out| (resp, body_out))
-                    .map_err(|e| error::Error::Payload(awc::error::JsonPayloadError::Payload(e)))
-            })
-            .and_then(|(res, body)| {
-                if !res.status().is_success() {
-                    let err: RequestError = serde_json::from_slice(&body).map_err(|e| {
-                        error::Error::Payload(awc::error::JsonPayloadError::Deserialize(e))
-                    })?;
-                    return Err(error::Error::Opennode(err));
-                }
-                serde_json::from_slice(&body)
-                    .map_err(|e| {
-                        error::Error::Payload(awc::error::JsonPayloadError::Deserialize(e))
-                    })
-                    .map(|res: Response<T>| res.data)
-            })
+
+        let mut body: Vec<u8> = Vec::new();
+        let mut content_type = "".to_string();
+        if let Some(p) = payload {
+            body = serde_json::to_vec(&p).unwrap();
+            content_type = "application/json".to_string();
+        }
+        let url = self.host.to_owned() + path;
+
+        let res = self.client.post(&url)
+            .header("Content-Type", content_type)
+            .header("Authorization", self.api_key.clone())
+            .body(body)
+            .send()
+            .await
+            .map_err(|e| Error::Http(e))?;
+
+        if res.status().is_success() {
+            let d: Data<T> = res.json().await.map_err(|e| Error::Http(e))?;
+            return Ok(d.data);
+        }
+
+        let e: opennode::error::RequestError = res.json().await.map_err(|e|{Error::Http(e)})?;
+        Err(Error::Opennode(e))
     }
 }

@@ -17,7 +17,7 @@ Put this in your `Cargo.toml`:
 ```toml
 [dependencies]
 opennode = "1.0.0"
-opennode-client = "0.1.0"
+opennode-client = "1.0.0"
 ```
 
 And this in your crate root:
@@ -43,22 +43,32 @@ cargo run --example <example> -- <example flags> <example args>
 
 ## Getting Started
 
-To get started, create a client:
-
 ```rust
-let client = opennode_client::client::Client::new("OPENNODE-TOKEN");
-```
+use clap::{App, Arg};
 
-Let's create a new charge using an actor system like [actix_rt](https://crates.io/crates/actix-rt):
+use opennode::account;
+use opennode_client::{client::Client, get_account_balance};
 
-```rust
-use opennode::charge;
-use opennode_client::create_charge;
+/// Get account balance:
+/// `cargo run --example account -- --key=<KEY>`
+#[tokio::main]
+async fn main() {
+    let app = App::new("account").arg(
+        Arg::with_name("key")
+            .short("k")
+            .long("key")
+            .help("opennode api_key")
+            .value_name("KEY")
+            .required(true)
+            .takes_value(true),
+    );
 
-// opennode_client::create_charge signature:
-// (client: &Client, payload: Payload) -> impl Future<Item=Charge, Error=Error>
+    let matches = app.get_matches();
+    let api_key = matches.value_of("key").unwrap();
+    let client = Client::from_url("https://dev-api.opennode.co", api_key);
 
-let charge: charge::Charge = System::new("test").block_on(lazy(|| {
-    create_charge(&client, charge::Payload::new(1000))
-})).unwrap();
+    let balance: account::Balance = get_account_balance(&client).await.unwrap();
+
+    println!("{:?}", balance)
+}
 ```

@@ -1,6 +1,4 @@
-use actix_rt::System;
 use clap::{App, Arg, ArgMatches, SubCommand};
-use futures::future::lazy;
 
 use opennode::charge;
 use opennode_client::*;
@@ -14,8 +12,8 @@ use opennode_client::client::Client;
 ///
 /// List paid charges:
 /// `cargo run --example charge -- --key=<KEY> list`
-///
-fn main() {
+#[tokio::main]
+async fn main() {
     let app = App::new("charge")
         .arg(
             Arg::with_name("key")
@@ -56,38 +54,30 @@ fn main() {
     let client = Client::from_url("https://dev-api.opennode.co", api_key);
 
     match matches.subcommand() {
-        ("create", Some(m)) => create(m, &client),
-        ("get", Some(m)) => get(m, &client),
-        ("list", _) => list(&client),
+        ("create", Some(m)) => create(m, &client).await,
+        ("get", Some(m)) => get(m, &client).await,
+        ("list", _) => list(&client).await,
         _ => (),
     }
 }
 
-fn create(matches: &ArgMatches, client: &Client) {
+async fn create(matches: &ArgMatches<'_>, client: &Client) {
     let a = matches.value_of("amount").unwrap();
     let amount = a.parse::<u64>().unwrap();
-    let charge: charge::Charge = System::new("test")
-        .block_on(lazy(|| {
-            create_charge(&client, charge::Payload::new(amount))
-        }))
-        .unwrap();
+    let charge: charge::Charge = create_charge(&client, charge::Payload::new(amount)).await.unwrap();
 
     println!("{:?}", charge)
 }
 
-fn get(matches: &ArgMatches, client: &Client) {
+async fn get(matches: &ArgMatches<'_>, client: &Client) {
     let id = matches.value_of("id").unwrap();
-    let charge: charge::Charge = System::new("test")
-        .block_on(lazy(|| get_charge(&client, id)))
-        .unwrap();
+    let charge: charge::Charge = get_charge(&client, id).await.unwrap();
 
     println!("{:?}", charge)
 }
 
-fn list(client: &Client) {
-    let charges: Vec<charge::Charge> = System::new("test")
-        .block_on(lazy(|| list_charges(&client)))
-        .unwrap();
+async fn list(client: &Client) {
+    let charges: Vec<charge::Charge> = list_charges(&client).await.unwrap();
 
     println!("{:?}", charges)
 }
