@@ -1,6 +1,6 @@
 [package]
 name = "opennode-client"
-version = "1.0.0"
+version = "1.0.1"
 authors = ["Edouard Paris <m@edouard.paris>"]
 description = "Client for the Opennode v1 HTTP API"
 edition = "2018"
@@ -11,7 +11,7 @@ documentation = "https://docs.rs/opennode-client/"
 
 [dependencies]
 opennode = "1.0.0"
-reqwest = { version = "0.10.0-alpha.2", features = ["json"] }
+reqwest = { version = "0.10.0", features = ["json"] }
 serde = { version = "1.0.93", features =["derive"]}
 serde_json = "1.0.41"
 

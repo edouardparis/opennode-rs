@@ -17,7 +17,7 @@ Put this in your `Cargo.toml`:
 ```toml
 [dependencies]
 opennode = "1.0.0"
-opennode-client = "1.0.0"
+opennode-client = "1.0.1"
 ```
 
 And this in your crate root:
